@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Panel administrativo | Nórdica Café{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+  <div><p class="eyebrow">CENTRO DE OPERACIONES</p><h1 class="section-title">Panel de administración</h1><p class="text-muted mb-0">Hola, {{ session.get('admin_username') }}. Aquí tienes el resumen de actividad.</p></div>
+  <a class="btn btn-coffee" href="{{ url_for('admin.nuevo_pedido_salon') }}">＋ Nuevo pedido de salón</a>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="metric-card"><span>Pedidos registrados</span><strong>{{ pendientes + entregados }}</strong><small>Acumulado en el sistema</small></div></div>
+  <div class="col-md-4"><div class="metric-card"><span>Pendientes</span><strong>{{ pendientes }}</strong><small>Requieren seguimiento</small></div></div>
+  <div class="col-md-4"><div class="metric-card"><span>Entregados</span><strong>{{ entregados }}</strong><small>Pedidos completados</small></div></div>
+</div>
+<div class="surface-card">
+  <div class="p-4 border-bottom d-flex justify-content-between align-items-center"><div><h2 class="h5 mb-1">Pedidos recientes</h2><p class="small text-muted mb-0">Últimos 100 pedidos registrados.</p></div><span class="soft-label">ACTIVIDAD</span></div>
+  {% if pedidos %}
+  <div class="table-responsive"><table class="table admin-table align-middle mb-0">
+    <thead><tr><th>Pedido</th><th>Cliente</th><th>Servicio</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead>
+    <tbody>{% for pedido in pedidos %}
+    <tr>
+      <td class="fw-bold">#{{ '%05d'|format(pedido.id) }}</td><td>{{ pedido.cliente_nombre }}<small class="d-block text-muted">{{ pedido.telefono }}</small></td>
+      <td>{{ pedido.tipo_servicio }}{% if pedido.mesa_num %}<small class="d-block text-muted">Mesa {{ pedido.mesa_num }}</small>{% endif %}</td>
+      <td>{{ pedido.fecha.strftime('%d/%m/%y %H:%M') }}</td><td class="fw-semibold">${{ '%.2f'|format(pedido.total) }}</td>
+      <td><span class="status-pill {{ 'status-done' if pedido.estado == 'Entregado' else 'status-pending' }}">{{ pedido.estado }}</span></td>
+      <td><form method="post" action="{{ url_for('admin.cambiar_estado', pedido_id=pedido.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="estado" value="{{ 'Pendiente' if pedido.estado == 'Entregado' else 'Entregado' }}"><button class="btn btn-sm {{ 'btn-outline-secondary' if pedido.estado == 'Entregado' else 'btn-outline-success' }}" type="submit">{{ 'Reabrir' if pedido.estado == 'Entregado' else 'Marcar entregado' }}</button></form></td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<div class="empty-state py-5"><h3 class="h5">Todavía no hay pedidos</h3><p class="text-muted">Los pedidos del portal público aparecerán aquí.</p></div>{% endif %}
+</div>
+{% endblock %}

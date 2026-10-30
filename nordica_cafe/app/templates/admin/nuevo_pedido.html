@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Nuevo pedido de salón | Nórdica Café{% endblock %}
+{% block content %}
+<div class="mb-4"><p class="eyebrow">ATENCIÓN EN LOCAL</p><h1 class="section-title">Registrar pedido de salón</h1><p class="text-muted">Registra los datos del cliente, asigna una mesa y selecciona los productos.</p></div>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="surface-card p-4">
+        <h2 class="h5 mb-3">Datos del pedido</h2>
+        <div class="mb-3"><label class="form-label" for="cliente_nombre">Nombre del cliente</label><input class="form-control" id="cliente_nombre" name="cliente_nombre" maxlength="120" required value="{{ request.form.get('cliente_nombre','') }}"></div>
+        <div class="mb-3"><label class="form-label" for="telefono">Teléfono</label><input class="form-control" id="telefono" name="telefono" maxlength="30" required value="{{ request.form.get('telefono','') }}"></div>
+        <div class="mb-3"><label class="form-label" for="mesa_num">Número de mesa</label><input class="form-control" id="mesa_num" name="mesa_num" type="number" min="1" required value="{{ request.form.get('mesa_num','') }}"></div>
+        <div class="alert alert-light small mb-0">El pedido se guardará con servicio <strong>Mesa</strong> y estado <strong>Pendiente</strong>.</div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="surface-card p-4">
+        <h2 class="h5 mb-3">Seleccionar productos</h2>
+        {% if platos %}
+        <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Producto</th><th>Precio</th><th style="width:150px">Cantidad</th></tr></thead><tbody>
+        {% for plato in platos %}<tr><td><strong>{{ plato.nombre }}</strong><small class="d-block text-muted">{{ plato.categoria }}</small></td><td>${{ '%.2f'|format(plato.precio) }}</td><td><input class="form-control" type="number" min="0" max="99" value="{{ request.form.get('cantidad_' ~ plato.id, 0) }}" name="cantidad_{{ plato.id }}" aria-label="Cantidad de {{ plato.nombre }}"></td></tr>{% endfor %}
+        </tbody></table></div>
+        {% else %}<p class="text-muted">No hay platos activos para seleccionar.</p>{% endif %}
+        <button class="btn btn-coffee mt-3" type="submit">Guardar pedido de salón</button>
+        <a class="btn btn-light mt-3 ms-2" href="{{ url_for('admin.dashboard') }}">Cancelar</a>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

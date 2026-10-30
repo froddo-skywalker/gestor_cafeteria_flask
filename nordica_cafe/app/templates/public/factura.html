@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Comprobante #{{ pedido.id }} | Nórdica Café{% endblock %}
+{% block content %}
+<div class="invoice-wrap">
+  <div class="invoice-top"><div><p class="eyebrow">NÓRDICA CAFÉ · COMPROBANTE</p><h1 class="section-title">¡Gracias por tu pedido!</h1><p class="text-muted mb-0">Conserva esta referencia para consultar tu compra.</p></div><div class="invoice-number">#{{ '%05d'|format(pedido.id) }}</div></div>
+  <div class="row g-3 my-4">
+    <div class="col-sm-6"><div class="invoice-meta"><small>CLIENTE</small><strong>{{ pedido.cliente_nombre }}</strong></div></div>
+    <div class="col-sm-6"><div class="invoice-meta"><small>TELÉFONO</small><strong>{{ pedido.telefono }}</strong></div></div>
+    <div class="col-sm-6"><div class="invoice-meta"><small>FECHA</small><strong>{{ pedido.fecha.strftime('%d/%m/%Y %H:%M') }}</strong></div></div>
+    <div class="col-sm-6"><div class="invoice-meta"><small>SERVICIO</small><strong>{{ pedido.tipo_servicio }}</strong></div></div>
+  </div>
+  <div class="table-responsive"><table class="table invoice-table align-middle"><thead><tr><th>Descripción</th><th>Cantidad</th><th class="text-end">Importe</th></tr></thead><tbody>
+  {% for detalle in pedido.detalles %}<tr><td>{{ detalle.plato.nombre }}</td><td>{{ detalle.cantidad }}</td><td class="text-end">${{ '%.2f'|format(detalle.subtotal) }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  <div class="invoice-total"><span>Total</span><strong>${{ '%.2f'|format(pedido.total) }}</strong></div>
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4"><span class="status-pill status-pending">{{ pedido.estado }}</span><a href="{{ url_for('public.inicio') }}" class="btn btn-coffee">Volver al menú</a></div>
+</div>
+{% endblock %}

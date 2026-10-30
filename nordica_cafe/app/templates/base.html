@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Gestor de Cafetería Modular">
+  <title>{% block title %}Cafetería Nórdica{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark cafe-nav">
+  <div class="container">
+    <a class="navbar-brand brand" href="{{ url_for('public.inicio') }}"><span class="brand-mark">C</span> NÓRDICA <small>CAFÉ & COCINA</small></a>
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <a class="nav-link text-white" href="{{ url_for('public.inicio') }}">Menú</a>
+      <a class="btn btn-outline-light btn-sm" href="{{ url_for('public.ver_carrito') }}">Carrito</a>
+      {% if session.get('admin_id') %}
+        <a class="nav-link text-white" href="{{ url_for('admin.dashboard') }}">Panel</a>
+        <form method="post" action="{{ url_for('admin.logout') }}" class="d-inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-light btn-sm" type="submit">Salir</button>
+        </form>
+      {% else %}
+        <a class="nav-link text-white-50 small" href="{{ url_for('admin.login') }}">Administración</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+<main class="container py-4 py-lg-5">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} shadow-sm" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="site-footer mt-5">
+  <div class="container py-4 d-flex flex-column flex-md-row justify-content-between gap-2">
+    <span>© {{ 2026 }} Nórdica Café. Gestor de Cafetería Modular.</span>
+    <span>Calidad, sencillez y buen café.</span>
+  </div>
+</footer>
+<!-- No se carga Bootstrap JavaScript ni se utiliza JavaScript propio. -->
+</body>
+</html>
