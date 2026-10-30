@@ -86,4 +86,4 @@ El análisis, las reglas del negocio, la arquitectura y las fases de desarrollo 
 
 ## Alcance académico
 
-Este sistema se desarrolla con fines educativos. Los pagos serán simulados y no procesará transacciones bancarias reales.
+Este sistema se desarrolla con fines educativos. Los pagos serán simulados y no procesará transacciones bancarias reales..
